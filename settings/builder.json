@@ -1,0 +1,54 @@
+{
+  "android-instant": {
+    "REMOTE_SERVER_ROOT": "",
+    "host": "",
+    "pathPattern": "",
+    "recordPath": "",
+    "scheme": "https",
+    "skipRecord": false
+  },
+  "appBundle": false,
+  "baidugame": {
+    "REMOTE_SERVER_ROOT": "",
+    "appid": "testappid",
+    "orientation": "portrait",
+    "subContext": ""
+  },
+  "encryptJs": false,
+  "excludeScenes": [
+    "f92b4105-14f9-4782-b6ff-eb68aa282520",
+    "ebdb8b60-ef3e-4e8b-a42a-f80b8bec2b86",
+    "1bea21bd-74d3-4799-9748-6029c5df8951",
+    "f658c7b0-7d4d-4a4b-a411-25fc433ba409"
+  ],
+  "fb-instant-games": {},
+  "includeSDKBox": false,
+  "inlineSpriteFrames": true,
+  "inlineSpriteFrames_native": false,
+  "md5Cache": false,
+  "mergeStartScene": true,
+  "optimizeHotUpdate": false,
+  "orientation": {
+    "landscapeLeft": true,
+    "landscapeRight": true,
+    "portrait": false,
+    "upsideDown": false
+  },
+  "packageName": "org.cocos2d.wogame",
+  "qqplay": {
+    "REMOTE_SERVER_ROOT": "",
+    "orientation": "portrait",
+    "zip": false
+  },
+  "startScene": "a710e749-df5d-421f-bacd-e4bab6ad056d",
+  "title": "garbage_game",
+  "webOrientation": "auto",
+  "wechatgame": {
+    "REMOTE_SERVER_ROOT": "",
+    "appid": "wxf31c21602fa9bf1f",
+    "orientation": "portrait",
+    "subContext": ""
+  },
+  "xxteaKey": "de301560-4217-4e",
+  "zipCompressJs": true
+}

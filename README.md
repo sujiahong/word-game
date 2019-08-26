@@ -1,2 +1,2 @@
-# word-game
-文字游戏
+# hello-world
+Hello world new project template.

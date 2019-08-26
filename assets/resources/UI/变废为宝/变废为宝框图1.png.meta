@@ -1,0 +1,32 @@
+{
+  "ver": "2.3.1",
+  "uuid": "209190d1-bdb6-436d-9dfc-a80cf852331c",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "platformSettings": {},
+  "subMetas": {
+    "变废为宝框图1": {
+      "ver": "1.0.4",
+      "uuid": "6b53eaa5-a444-4d56-9859-046e0ba8ad24",
+      "rawTextureUuid": "209190d1-bdb6-436d-9dfc-a80cf852331c",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -0.5,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 1,
+      "width": 148,
+      "height": 148,
+      "rawWidth": 149,
+      "rawHeight": 150,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
