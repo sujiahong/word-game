@@ -1,11 +1,10 @@
 "use strict";
-const TAG = "ClassificationScene.js";
+const TAG = "WordScene.js";
 
 if (!cc.g_ada){
     cc.g_ada = {};
 }
 const g_ada = cc.g_ada;
-const ClassificationRoom = require("../model/garbage/ClassificationRoom");
 const constant = require("../share/constant");
 const config = require("../model/garbage/GarbageConfig");
 const eventEmit = require("../util/event_emit");
@@ -15,24 +14,13 @@ var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
     closeButton: cc.Button,
-    garbagePrefab: {
-        default: null,
-        type: cc.Prefab
-    },
-    timeLimit: 0,
-    timeCount: 0,
-    startLocation: null,
-    moveLocation: null,
-    winPanel: cc.Node,
-    failPanel: cc.Node,
+
 };
 
 cls.onLoad = function(){
     let self = this;
     this.closeButton.node.on("click", this.onClose, this); 
-    g_ada.room = new ClassificationRoom(constant.ROOM_TYPE.garbage);
-    g_ada.room.scene = this;
-    g_ada.room.spawnGarbage();
+
     // this.garbagePrefab.node.removeFromParent();
     //var player = new Player(cc.g_ada.gameUser.getPlayerInitData());
 
@@ -77,20 +65,6 @@ cls.onTouchEnd = function(event){
 }
 
 cls.update = function(dt){
-    this.timeCount += dt;
-    if (this.timeCount >= this.timeLimit){
-        if (g_ada.room.isLastGarbage()){
-            //console.log("all garbage create end end  end");
-            this.timeLimit = -1;
-        }else{
-            var data = g_ada.room.getBarbageDataByIndex(g_ada.room.garbageCount);
-            console.log(JSON.stringify(data));
-            this.createGarbageSprite(data.keyid, data.type, data.img);
-            this.timeCount = 0;
-            this.timeLimit = data.interval;
-            g_ada.room.garbageCount++;
-        }
-    }
 }
 
 cls.createGarbageSprite = function(keyid, type, img){

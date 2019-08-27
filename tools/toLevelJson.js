@@ -11,7 +11,10 @@ for (var i = 3; i < list.length; ++i){
     var temp = {};
     for(var j = 0; j < keyItem.length; ++j){
         if (typeItem[j] == "arrayint"){
-            temp[keyItem[j]] = item[j].split(";");
+            var arr = item[j].split(";");
+            if (arr[arr.length - 1] == "")
+                arr.pop();
+            temp[keyItem[j]] = arr;
         }else{
             temp[keyItem[j]] = item[j];
         }
