@@ -1,6 +1,5 @@
 "use strict";
 const TAG = "StartGamePanel.js";
-const config = require("GarbageConfig");
 if (!cc.g_ada){
     cc.g_ada = {};
 }

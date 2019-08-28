@@ -4,7 +4,6 @@ if (!cc.g_ada){
     cc.g_ada = {};
 }
 const g_ada = cc.g_ada;
-const config = require("../model/garbage/GarbageConfig");
 
 var cls = {};
 

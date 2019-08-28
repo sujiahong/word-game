@@ -6,7 +6,6 @@ if (!cc.g_ada){
 }
 const g_ada = cc.g_ada;
 const constant = require("../share/constant");
-const config = require("../model/garbage/GarbageConfig");
 const eventEmit = require("../util/event_emit");
 
 var cls = {};
@@ -33,11 +32,8 @@ cls.onLoad = function(){
     eventEmit.on("fail", function(){
         self.failPanel.active = true;
     });
-
-    var b = Math.sin(15);
-    var c = Math.cos(15);
-    console.log(b, c)
-    var posArr = this.getWordPosArr(5);
+    this.haveTouchWordArr = [];
+    var posArr = this.getWordPosArr(7);
     for (var i = 0; i < posArr.length; ++i){
         var lab = this.createLabel();
         lab.setPosition(posArr[i]);
@@ -49,7 +45,7 @@ cls.getWordPosArr = function(num){
     var intervalAngle = 360 / num;
     var arr = [];
     for(var i = 0; i < num; ++i){
-        var angle = 162 - intervalAngle*(i+1);
+        var angle = 90 - intervalAngle*i;
         var radian = angle*Math.PI/180;
         var pos = cc.v2(Math.cos(radian)*150, Math.sin(radian)*150);
         arr.push(pos);
@@ -71,15 +67,44 @@ cls.onDestroy = function(){
 }
 
 cls.onTouchStart = function(event){
-    this.startLocation = event.getLocation();
-    console.log("touch start", this.startLocation.x, this.startLocation.y);
+    this.touchLabel = null;
+    var startLocation = event.getLocation();
+    console.log("touch start", startLocation.x, startLocation.y);
+    var arr = this.diskImg.node.getChildren();
+    for (var i = 0; i < arr.length; ++i){
+        var rect = arr[i].getBoundingBoxToWorld();
+        if (rect.contains(startLocation)){
+            this.touchLabel = arr[i];
+            var node = new cc.Node("line");
+            var graph = node.addComponent(cc.Graphics);
+            this.touchLabel.addChild(node);
+            return;
+        }
+    }
 }
 
 cls.onTouchMove = function(event){
-    this.moveLocation = event.getLocation();
+    if (this.touchLabel){
+        var moveLocation = event.getLocation();
+        var node = this.touchLabel.getChildByName("line");
+        var graph = node.getComponent(cc.Graphics);
+        graph.clear();
+        graph.lineWidth = 10;
+        var pos = this.diskImg.node.convertToWorldSpaceAR(this.touchLabel.getPosition());
+        console.log(pos.x, pos.y);
+        graph.moveTo(0, 0);
+        graph.lineTo(moveLocation.x, moveLocation.y);
+        graph.strokeColor = new cc.Color(255, 0, 0);
+        graph.stroke();
+        
+
+
+    }
 }
 
 cls.onTouchEnd = function(event){
+    var arr = this.diskImg.node.getChildren();
+    console.log(arr);
 }
 
 cls.update = function(dt){

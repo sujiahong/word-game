@@ -6,7 +6,6 @@ if (!cc.g_ada){
 }
 const g_ada = cc.g_ada;
 const constant = require("../share/constant");
-const config = require("../model/garbage/GarbageConfig");
 const util = require("../util/util");
 g_ada.curLevel = Number(util.getLocalStore("CUR_LEVEL") || 1);
 
