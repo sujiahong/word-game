@@ -14,7 +14,7 @@ var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
     closeButton: cc.Button,
-
+    diskImg: cc.Sprite,
 };
 
 cls.onLoad = function(){
@@ -33,6 +33,36 @@ cls.onLoad = function(){
     eventEmit.on("fail", function(){
         self.failPanel.active = true;
     });
+
+    var b = Math.sin(15);
+    var c = Math.cos(15);
+    console.log(b, c)
+    var posArr = this.getWordPosArr(5);
+    for (var i = 0; i < posArr.length; ++i){
+        var lab = this.createLabel();
+        lab.setPosition(posArr[i]);
+        this.diskImg.node.addChild(lab);
+    }
+}
+
+cls.getWordPosArr = function(num){
+    var intervalAngle = 360 / num;
+    var arr = [];
+    for(var i = 0; i < num; ++i){
+        var angle = 162 - intervalAngle*(i+1);
+        var radian = angle*Math.PI/180;
+        var pos = cc.v2(Math.cos(radian)*150, Math.sin(radian)*150);
+        arr.push(pos);
+    }
+    return arr;
+}
+
+cls.createLabel = function(){
+    var node = new cc.Node();
+    node.color = new cc.Color(0, 255, 0);
+    var label = node.addComponent(cc.Label);
+    label.string = "东";
+    return node;
 }
 
 cls.onDestroy = function(){
@@ -50,40 +80,9 @@ cls.onTouchMove = function(event){
 }
 
 cls.onTouchEnd = function(event){
-    var garbage = g_ada.room.garbageClassificationArr[g_ada.room.garbageOpCount];
-    console.log("touch--end ", garbage, g_ada.room.garbageOpCount, g_ada.room.garbageCount);
-    if (garbage){
-        let gspt = garbage.getComponent("GarbageSprite");
-        var time = gspt.getAccrossTime();
-        console.log("touch end  ", gspt, garbage.x, garbage.y);
-        if (this.moveLocation.x - this.startLocation.x > 10){
-            garbage.runAction(cc.moveTo(time, cc.v2(config.RIGHT_X, config.DOWN_Y)));
-        }else if (this.moveLocation.x - this.startLocation.x < -10){
-            garbage.runAction(cc.moveTo(time, cc.v2(config.LEFT_X, config.DOWN_Y)));
-        }
-    }
 }
 
 cls.update = function(dt){
-}
-
-cls.createGarbageSprite = function(keyid, type, img){
-    console.log("11111111     ", keyid, type, img)
-    var self = this;
-    let garbage = cc.instantiate(this.garbagePrefab);
-    g_ada.room.garbageClassificationArr.push(garbage);
-    garbage.setPosition(0, 700);
-    let gspt = garbage.getComponent("GarbageSprite");
-    gspt.keyid = keyid;
-    gspt.type = type;
-    cc.loader.load(cc.url.raw(img), function(err, texture){
-        if (err){
-            return console.log("createGarbageSprite load err: ", err);
-        }
-        var spt = garbage.getComponent(cc.Sprite);
-        spt.spriteFrame = new cc.SpriteFrame(texture);
-        self.node.addChild(garbage);
-    });
 }
 
 cls.onClose = function(){
