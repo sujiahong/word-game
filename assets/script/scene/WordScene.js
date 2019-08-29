@@ -72,13 +72,13 @@ cls.onTouchStart = function(event){
     this.haveTouchWordArr = [];
     var startLocation = event.getLocation();
     console.log("touch start", startLocation.x, startLocation.y);
-    var labelNode = this.getTouchLabelNode(startLocation);
-    if (labelNode){
-        this.touchLabel = labelNode;
-        this.haveTouchWordArr.push(labelNode);
+    var touchNode = this.getTouchLabelNode(startLocation);
+    if (touchNode){
+        this.touchLabel = touchNode;
+        this.haveTouchWordArr.push(touchNode);
         var node = new cc.Node("line");
         node.addComponent(cc.Graphics);
-        labelNode.addChild(node);
+        touchNode.addChild(node);
         this.showTouchLabelContent();
     }
 }
@@ -92,34 +92,36 @@ cls.onTouchMove = function(event){
         graph.lineWidth = 10;
         graph.strokeColor = new cc.Color(255, 0, 0);
         graph.moveTo(0, 0);
-        var labelNode = this.getTouchLabelNode(moveLocation);
-        if (labelNode && !isHaveTouched(this.haveTouchWordArr, labelNode)){
-            var lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
-            if (lastNode.uuid == labelNode.uuid){
-                lastNode.removeChild(lastNode.getChildByName("line"));
-                //this.haveTouchWordArr.pop();
-                lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-2];
-                lastNode.removeChild(lastNode.getChildByName("line"));
-                this.touchLabel = labelNode;
-                var node = new cc.Node("line");
-                node.addComponent(cc.Graphics);
-                labelNode.addChild(node);
-            }else{
-                var worldPos = this.diskImg.node.convertToWorldSpaceAR(labelNode.getPosition());
-                var pos = lineNode.parent.convertToNodeSpaceAR(worldPos);
-                graph.lineTo(pos.x, pos.y);
-                this.touchLabel = labelNode;
-                this.haveTouchWordArr.push(labelNode);
-                var node = new cc.Node("line");
-                node.addComponent(cc.Graphics);
-                labelNode.addChild(node);
-                graph.stroke();
-            }
+        var touchNode = this.getTouchLabelNode(moveLocation);
+        if (touchNode && !isHaveTouched(this.haveTouchWordArr, touchNode)){
+            var worldPos = this.diskImg.node.convertToWorldSpaceAR(touchNode.getPosition());
+            var pos = lineNode.parent.convertToNodeSpaceAR(worldPos);
+            graph.lineTo(pos.x, pos.y);
+            this.touchLabel = touchNode;
+            this.haveTouchWordArr.push(touchNode);
+            var node = new cc.Node("line");
+            node.addComponent(cc.Graphics);
+            touchNode.addChild(node);
+            graph.stroke();
             this.showTouchLabelContent();
         }else{
             var pos = this.touchLabel.convertToNodeSpaceAR(moveLocation);
             graph.lineTo(pos.x, pos.y);
             graph.stroke();
+            var lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-2];
+            if (lastNode && touchNode){
+                if (lastNode.uuid == touchNode.uuid){
+                    lastNode.removeChild(lastNode.getChildByName("line"));
+                    var node1 = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
+                    node1.removeChild(node1.getChildByName("line"));
+                    this.haveTouchWordArr.pop();
+                    this.touchLabel = lastNode;
+                    var node = new cc.Node("line");
+                    node.addComponent(cc.Graphics);
+                    lastNode.addChild(node);
+                    this.showTouchLabelContent();
+                }
+            }
         }
     }
 }
