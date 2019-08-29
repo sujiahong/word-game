@@ -14,6 +14,7 @@ cls.extends = cc.Component;
 cls.properties = {
     closeButton: cc.Button,
     diskImg: cc.Sprite,
+    showLabel: cc.Label,
 };
 
 cls.onLoad = function(){
@@ -53,7 +54,7 @@ cls.getWordPosArr = function(num){
     return arr;
 }
 
-cls.createLabel = function(){
+cls.createLabel = function(str){
     var node = new cc.Node();
     node.color = new cc.Color(0, 255, 0);
     var label = node.addComponent(cc.Label);
@@ -68,43 +69,94 @@ cls.onDestroy = function(){
 
 cls.onTouchStart = function(event){
     this.touchLabel = null;
+    this.haveTouchWordArr = [];
     var startLocation = event.getLocation();
     console.log("touch start", startLocation.x, startLocation.y);
-    var arr = this.diskImg.node.getChildren();
-    for (var i = 0; i < arr.length; ++i){
-        var rect = arr[i].getBoundingBoxToWorld();
-        if (rect.contains(startLocation)){
-            this.touchLabel = arr[i];
-            var node = new cc.Node("line");
-            var graph = node.addComponent(cc.Graphics);
-            this.touchLabel.addChild(node);
-            return;
-        }
+    var labelNode = this.getTouchLabelNode(startLocation);
+    if (labelNode){
+        this.touchLabel = labelNode;
+        this.haveTouchWordArr.push(labelNode);
+        var node = new cc.Node("line");
+        node.addComponent(cc.Graphics);
+        labelNode.addChild(node);
+        this.showTouchLabelContent();
     }
 }
 
 cls.onTouchMove = function(event){
     if (this.touchLabel){
         var moveLocation = event.getLocation();
-        var node = this.touchLabel.getChildByName("line");
-        var graph = node.getComponent(cc.Graphics);
+        var lineNode = this.touchLabel.getChildByName("line");
+        var graph = lineNode.getComponent(cc.Graphics);
         graph.clear();
         graph.lineWidth = 10;
-        var pos = this.diskImg.node.convertToWorldSpaceAR(this.touchLabel.getPosition());
-        console.log(pos.x, pos.y);
-        graph.moveTo(0, 0);
-        graph.lineTo(moveLocation.x, moveLocation.y);
         graph.strokeColor = new cc.Color(255, 0, 0);
-        graph.stroke();
-        
-
-
+        graph.moveTo(0, 0);
+        var labelNode = this.getTouchLabelNode(moveLocation);
+        if (labelNode && !isHaveTouched(this.haveTouchWordArr, labelNode)){
+            var lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
+            if (lastNode.uuid == labelNode.uuid){
+                lastNode.removeChild(lastNode.getChildByName("line"));
+                //this.haveTouchWordArr.pop();
+                lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-2];
+                lastNode.removeChild(lastNode.getChildByName("line"));
+                this.touchLabel = labelNode;
+                var node = new cc.Node("line");
+                node.addComponent(cc.Graphics);
+                labelNode.addChild(node);
+            }else{
+                var worldPos = this.diskImg.node.convertToWorldSpaceAR(labelNode.getPosition());
+                var pos = lineNode.parent.convertToNodeSpaceAR(worldPos);
+                graph.lineTo(pos.x, pos.y);
+                this.touchLabel = labelNode;
+                this.haveTouchWordArr.push(labelNode);
+                var node = new cc.Node("line");
+                node.addComponent(cc.Graphics);
+                labelNode.addChild(node);
+                graph.stroke();
+            }
+            this.showTouchLabelContent();
+        }else{
+            var pos = this.touchLabel.convertToNodeSpaceAR(moveLocation);
+            graph.lineTo(pos.x, pos.y);
+            graph.stroke();
+        }
     }
 }
 
 cls.onTouchEnd = function(event){
+    var node = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
+    node.removeChild(node.getChildByName("line"));
+
+}
+
+cls.getTouchLabelNode = function(location){
     var arr = this.diskImg.node.getChildren();
-    console.log(arr);
+    for (var i = 0; i < arr.length; ++i){
+        var rect = arr[i].getBoundingBoxToWorld();
+        if (rect.contains(location)){
+            return arr[i];
+        }
+    }
+    return null;
+}
+
+cls.showTouchLabelContent = function(){
+    var str = "";
+    for (var i = 0; i < this.haveTouchWordArr.length; ++i){
+        var label = this.haveTouchWordArr[i].getComponent(cc.Label);
+        str += label.string;
+    }
+    this.showLabel.string = str;
+}
+
+var isHaveTouched = function(arr, node){
+    for (var i = 0; i < arr.length; ++i){
+        if (arr[i].uuid == node.uuid){
+            return true;
+        }
+    }
+    return false;
 }
 
 cls.update = function(dt){
