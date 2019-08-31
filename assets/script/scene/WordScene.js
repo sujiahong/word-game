@@ -17,7 +17,10 @@ cc.loader.load(url, function(err, data){
 var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
-    closeButton: cc.Button,
+    backButton: cc.Button,
+    rankButton: cc.Button,
+    refreshButton: cc.Button,
+    hintButton: cc.Button,
     diskImg: cc.Sprite,
     showLabel: cc.Label,
     titleLabel: cc.Label,
@@ -27,7 +30,10 @@ cls.properties = {
 };
 
 cls.onLoad = function(){
-    this.closeButton.node.on("click", this.onClose, this); 
+    this.backButton.node.on("click", this.onBack, this);
+    this.rankButton.node.on("click", this.onRank, this);
+    this.refreshButton.node.on("click", this.onRefresh, this);
+    this.hintButton.node.on("click", this.onHint, this); 
     this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
     this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
     this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -126,12 +132,13 @@ cls.refreshDisk = function(){
 }
 
 cls.getWordPosArr = function(num){
+    const radius = 120;
     var intervalAngle = 360 / num;
     var arr = [];
     for(var i = 0; i < num; ++i){
         var angle = 90 - intervalAngle*i;
         var radian = angle*Math.PI/180;
-        var pos = cc.v2(Math.cos(radian)*150, Math.sin(radian)*150);
+        var pos = cc.v2(Math.cos(radian)*radius, Math.sin(radian)*radius);
         arr.push(pos);
     }
     return arr;
@@ -261,12 +268,21 @@ var isHaveTouched = function(arr, node){
     return false;
 }
 
-cls.update = function(dt){
-}
-
-cls.onClose = function(){
+cls.onBack = function(){
     console.log(TAG, "onClose");
     cc.director.loadScene("HomeClassScene");
+}
+
+cls.onRank = function(){
+    console.log(TAG, "onRank");
+}
+
+cls.onRefresh = function(){
+    console.log(TAG, "onRefresh");
+}
+
+cls.onHint = function(){
+    console.log(TAG, "onHint");
 }
 
 cc.Class(cls);
