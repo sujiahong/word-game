@@ -39,12 +39,6 @@ cls.onLoad = function(){
             g_ada.levelData = data.json;
         }
     });
-    url = cc.url.raw("resources/json/garbage.json");
-    cc.loader.load(url, function(err, data){
-        if (err == null){
-            g_ada.garbageData = data.json;
-        }
-    });
 }
 
 cls.onStart = function(){
