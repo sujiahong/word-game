@@ -35,6 +35,7 @@ cls.onLoad = function(){
         console.log("scroll began ");
     });
     this.initSentence();
+    this.nextEmptySentence();
     this.initDisk();
 }
 
@@ -43,12 +44,13 @@ cls.initSentence = function(){
     var curData = g_ada.levelData[g_ada.curLevel];
     this.titleLabel.string = curData.name;
     var scrollContent = this.sentenceScroll.content;
+    scrollContent.removeAllChildren();
     var lineArr = curData.line;
     var len = lineArr.length;
     scrollContent.height = 100 * len;
     var nodeSize = 50;
     var wi = 0, hi = (scrollContent.height-nodeSize*len) / (len+1);
-    console.log(JSON.stringify(scrollContent.getContentSize()))
+    console.log("1111  ", JSON.stringify(scrollContent.getContentSize()))
     for (var i = 0; i < len; ++i){
         var sentence = lineArr[i];
         var slen = sentence.length;
@@ -67,7 +69,6 @@ cls.initSentence = function(){
 }
 
 cls.initDisk = function(){
-    this.nextEmptySentence();
     this.haveTouchWordArr = [];
     this.refreshDisk();
 }
@@ -80,6 +81,20 @@ cls.nextEmptySentence = function(){
             this.curSentenceIdx = i;
             return;
         }
+    }
+    if (i >= typeArr.length){
+        this.curSentenceIdx = -1;
+        g_ada.curLevel++;
+        this.initSentence();
+        var curData = g_ada.levelData[g_ada.curLevel];
+        var typeArr = curData.type;
+        for (i = this.curSentenceIdx+1; i < typeArr.length; ++i){
+            if (typeArr[i] == "0"){
+                this.curSentenceIdx = i;
+                break;
+            }
+        }
+        this.initDisk();
     }
 }
 
