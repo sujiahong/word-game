@@ -14,6 +14,14 @@ cc.loader.load(url, function(err, data){
         g_ada.levelData = data.json;
     }
 });
+var tex = null;
+url = cc.url.raw("resources/UI/主界面/椭圆 4 拷贝 2.png");
+cc.loader.load(url, function(err, tex){
+    console.log(err, tex)
+    if (err == null){
+        tex = tex;
+    }
+});
 var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
@@ -22,9 +30,13 @@ cls.properties = {
     refreshButton: cc.Button,
     hintButton: cc.Button,
     diskImg: cc.Sprite,
+    showSpt: cc.Sprite,
     showLabel: cc.Label,
+    levelLabel: cc.Label,
     titleLabel: cc.Label,
+    authorLabel: cc.Label,
     sentenceScroll: cc.ScrollView,
+    wordLabelPrefab: cc.Prefab,
 
     curSentenceIdx: -1,
 };
@@ -47,8 +59,10 @@ cls.onLoad = function(){
 
 cls.initSentence = function(){
     this.sentenceLabelNodeArr = [];
+    this.levelLabel.string = "第 " + g_ada.curLevel + " 关";
     var curData = g_ada.levelData[g_ada.curLevel];
     this.titleLabel.string = curData.name;
+    this.authorLabel.string = curData.author;
     var scrollContent = this.sentenceScroll.content;
     scrollContent.removeAllChildren();
     var lineArr = curData.line;
@@ -65,7 +79,7 @@ cls.initSentence = function(){
         for (var j = 0; j < slen; ++j){
             wi = (scrollContent.width - nodeSize*slen)/(slen+1);
             var x = -(scrollContent.width/2 - ((wi+nodeSize/2)*(j+1) + (nodeSize/2)*j));
-            var labNode = this.createLabel((curData.type[i] == "1") ? sentence[j]: " ");
+            var labNode = this.createShowWordLabel((curData.type[i] == "1") ? sentence[j]: " ");
             labNode.setPosition(cc.v2(x, y));
             scrollContent.addChild(labNode);
             arr.push(labNode);
@@ -125,7 +139,7 @@ cls.refreshDisk = function(){
     var posArr = this.getWordPosArr(wordLen);
     var idxArr = getRandomIndexArr(wordLen);
     for (var i = 0; i < wordLen; ++i){
-        var lab = this.createLabel(wordArr[idxArr[i]]);
+        var lab = this.createLinkWordLabel(wordArr[idxArr[i]]);
         lab.setPosition(posArr[i]);
         this.diskImg.node.addChild(lab);
     }
@@ -144,7 +158,17 @@ cls.getWordPosArr = function(num){
     return arr;
 }
 
-cls.createLabel = function(str){
+cls.createShowWordLabel = function(str){
+    var prefab = cc.instantiate(this.wordLabelPrefab);
+    //node.setContentSize(40, 40);
+    var labelNode = prefab.getChildByName("label");
+    labelNode.color = new cc.Color(0, 0, 0);
+    var labelComponent = labelNode.getComponent(cc.Label);
+    labelComponent.string = str;
+    return prefab;
+}
+
+cls.createLinkWordLabel = function(str){
     var node = new cc.Node();
     node.setContentSize(40, 40);
     node.color = new cc.Color(0, 255, 0);
@@ -223,19 +247,21 @@ cls.onTouchEnd = function(event){
     if (this.showLabel.string == sentence){
         var nodeLabelArr = this.sentenceLabelNodeArr[this.curSentenceIdx];
         for(var i = 0; i < nodeLabelArr.length; ++i){
-            var label = nodeLabelArr[i].addComponent(cc.Label);
+            var labelNode = nodeLabelArr[i].getChildByName("label");
+            var label = labelNode.getComponent(cc.Label);
             label.string = sentence[i];
         }
         this.nextEmptySentence();
         this.refreshDisk();
-        this.showLabel.string = "";
+        this.haveTouchWordArr = [];
+        this.showTouchLabelContent();
     }else{
         for(var i = 0; i < this.haveTouchWordArr.length; ++i){
             var node = this.haveTouchWordArr[i];
             node.removeChild(node.getChildByName("line"));
         }
         this.haveTouchWordArr = [];
-        this.showLabel.string = "";
+        this.showTouchLabelContent();
     }
 }
 
@@ -257,6 +283,7 @@ cls.showTouchLabelContent = function(){
         str += label.string;
     }
     this.showLabel.string = str;
+    this.showSpt.node.width = this.haveTouchWordArr.length*40+40;
 }
 
 var isHaveTouched = function(arr, node){
