@@ -19,7 +19,8 @@
     "f92b4105-14f9-4782-b6ff-eb68aa282520",
     "ebdb8b60-ef3e-4e8b-a42a-f80b8bec2b86",
     "1bea21bd-74d3-4799-9748-6029c5df8951",
-    "f658c7b0-7d4d-4a4b-a411-25fc433ba409"
+    "f658c7b0-7d4d-4a4b-a411-25fc433ba409",
+    "a710e749-df5d-421f-bacd-e4bab6ad056d"
   ],
   "fb-instant-games": {},
   "includeSDKBox": false,
@@ -40,8 +41,8 @@
     "orientation": "portrait",
     "zip": false
   },
-  "startScene": "a710e749-df5d-421f-bacd-e4bab6ad056d",
-  "title": "garbage_game",
+  "startScene": "955a7333-fdea-415a-8cc0-e463404540be",
+  "title": "word_game",
   "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "",

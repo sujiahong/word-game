@@ -24,4 +24,4 @@ for (var i = 3; i < list.length; ++i){
 
 console.log(level);
 
-fs.writeFileSync("../assets/resources/json/level.json", JSON.stringify(level));
+fs.writeFileSync("../assets/resources/config/level.json", JSON.stringify(level));

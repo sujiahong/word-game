@@ -6,22 +6,21 @@ if (!cc.g_ada){
 }
 const g_ada = cc.g_ada;
 g_ada.curLevel = 1;
-const constant = require("../share/constant");
-const eventEmit = require("../util/event_emit");
-var url = cc.url.raw("resources/json/level.json");
-cc.loader.load(url, function(err, data){
+//const constant = require("../share/constant");
+//const eventEmit = require("../util/event_emit");
+let touchTex = null;
+cc.loader.load(cc.url.raw("resources/UI/主界面/椭圆 4 拷贝 2.png"), function(err, tex){
     if (err == null){
-        g_ada.levelData = data.json;
+        touchTex = tex;
     }
 });
-var tex = null;
-url = cc.url.raw("resources/UI/主界面/椭圆 4 拷贝 2.png");
-cc.loader.load(url, function(err, tex){
-    console.log(err, tex)
+let wordTex = null;
+cc.loader.load(cc.url.raw("resources/UI/主界面/矩形 1 拷贝 34.png"), function(err, tex){
     if (err == null){
-        tex = tex;
+        wordTex = tex;
     }
 });
+
 var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
@@ -42,6 +41,7 @@ cls.properties = {
 };
 
 cls.onLoad = function(){
+    var self =  this;
     this.backButton.node.on("click", this.onBack, this);
     this.rankButton.node.on("click", this.onRank, this);
     this.refreshButton.node.on("click", this.onRefresh, this);
@@ -52,9 +52,18 @@ cls.onLoad = function(){
     this.sentenceScroll.node.on("scroll-began", function(){
         console.log("scroll began ");
     });
-    this.initSentence();
-    this.nextEmptySentence();
-    this.initDisk();
+    // var url = cc.url.raw("resources/level.json");
+    // console.log(url)
+    cc.loader.loadRes("config/level", function(err, data){
+        console.log("77777777 ", err, data)
+        if (err == null){
+            g_ada.levelData = data.json;
+            self.initSentence();
+            self.nextEmptySentence();
+            self.initDisk();
+        }
+    });
+
 }
 
 cls.initSentence = function(){
@@ -79,7 +88,7 @@ cls.initSentence = function(){
         for (var j = 0; j < slen; ++j){
             wi = (scrollContent.width - nodeSize*slen)/(slen+1);
             var x = -(scrollContent.width/2 - ((wi+nodeSize/2)*(j+1) + (nodeSize/2)*j));
-            var labNode = this.createShowWordLabel((curData.type[i] == "1") ? sentence[j]: " ");
+            var labNode = this.createShowWordLabel((curData.type[i] == "1") ? sentence[j]: "");
             labNode.setPosition(cc.v2(x, y));
             scrollContent.addChild(labNode);
             arr.push(labNode);
@@ -146,7 +155,7 @@ cls.refreshDisk = function(){
 }
 
 cls.getWordPosArr = function(num){
-    const radius = 120;
+    const radius = 110;
     var intervalAngle = 360 / num;
     var arr = [];
     for(var i = 0; i < num; ++i){
@@ -160,20 +169,29 @@ cls.getWordPosArr = function(num){
 
 cls.createShowWordLabel = function(str){
     var prefab = cc.instantiate(this.wordLabelPrefab);
-    //node.setContentSize(40, 40);
     var labelNode = prefab.getChildByName("label");
     labelNode.color = new cc.Color(0, 0, 0);
     var labelComponent = labelNode.getComponent(cc.Label);
     labelComponent.string = str;
+    if (str == ""){
+        var spt = prefab.getComponent(cc.Sprite);
+        spt.spriteFrame = new cc.SpriteFrame(wordTex);
+    }
     return prefab;
 }
 
 cls.createLinkWordLabel = function(str){
     var node = new cc.Node();
     node.setContentSize(40, 40);
-    node.color = new cc.Color(0, 255, 0);
-    var label = node.addComponent(cc.Label);
+    var spt = node.addComponent(cc.Sprite);
+    spt.spriteFrame = new cc.SpriteFrame(touchTex);
+    spt.enabled = false;
+    var childNode = new cc.Node("label");
+    childNode.color = new cc.Color(0, 0, 0);
+    childNode.setContentSize(40, 40);
+    var label = childNode.addComponent(cc.Label);
     label.string = str;
+    node.addChild(childNode);
     return node;
 }
 
@@ -183,13 +201,14 @@ cls.onDestroy = function(){
 }
 
 cls.onTouchStart = function(event){
-    this.touchLabel = null;
+    this.touchSptNode = null;
     this.haveTouchWordArr = [];
     var startLocation = event.getLocation();
     console.log("touch start", startLocation.x, startLocation.y);
     var touchNode = this.getTouchLabelNode(startLocation);
     if (touchNode){
-        this.touchLabel = touchNode;
+        this.touchSptNode = touchNode;
+        this.touchEffectShow(touchNode);
         this.haveTouchWordArr.push(touchNode);
         var node = new cc.Node("line");
         node.addComponent(cc.Graphics);
@@ -199,9 +218,9 @@ cls.onTouchStart = function(event){
 }
 
 cls.onTouchMove = function(event){
-    if (this.touchLabel){
+    if (this.touchSptNode){
         var moveLocation = event.getLocation();
-        var lineNode = this.touchLabel.getChildByName("line");
+        var lineNode = this.touchSptNode.getChildByName("line");
         var graph = lineNode.getComponent(cc.Graphics);
         graph.clear();
         graph.lineWidth = 10;
@@ -212,7 +231,8 @@ cls.onTouchMove = function(event){
             var worldPos = this.diskImg.node.convertToWorldSpaceAR(touchNode.getPosition());
             var pos = lineNode.parent.convertToNodeSpaceAR(worldPos);
             graph.lineTo(pos.x, pos.y);
-            this.touchLabel = touchNode;
+            this.touchSptNode = touchNode;
+            this.touchEffectShow(touchNode);
             this.haveTouchWordArr.push(touchNode);
             var node = new cc.Node("line");
             node.addComponent(cc.Graphics);
@@ -220,7 +240,7 @@ cls.onTouchMove = function(event){
             graph.stroke();
             this.showTouchLabelContent();
         }else{
-            var pos = this.touchLabel.convertToNodeSpaceAR(moveLocation);
+            var pos = this.touchSptNode.convertToNodeSpaceAR(moveLocation);
             graph.lineTo(pos.x, pos.y);
             graph.stroke();
             var lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-2];
@@ -230,7 +250,8 @@ cls.onTouchMove = function(event){
                     var node1 = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
                     node1.removeChild(node1.getChildByName("line"));
                     this.haveTouchWordArr.pop();
-                    this.touchLabel = lastNode;
+                    this.touchSptNode = lastNode;
+                    this.touchEffectShow(lastNode);
                     var node = new cc.Node("line");
                     node.addComponent(cc.Graphics);
                     lastNode.addChild(node);
@@ -258,6 +279,7 @@ cls.onTouchEnd = function(event){
     }else{
         for(var i = 0; i < this.haveTouchWordArr.length; ++i){
             var node = this.haveTouchWordArr[i];
+            this.touchEffectHide(node);
             node.removeChild(node.getChildByName("line"));
         }
         this.haveTouchWordArr = [];
@@ -279,11 +301,26 @@ cls.getTouchLabelNode = function(location){
 cls.showTouchLabelContent = function(){
     var str = "";
     for (var i = 0; i < this.haveTouchWordArr.length; ++i){
-        var label = this.haveTouchWordArr[i].getComponent(cc.Label);
+        var labelNode = this.haveTouchWordArr[i].getChildByName("label");
+        var label = labelNode.getComponent(cc.Label);
         str += label.string;
     }
     this.showLabel.string = str;
     this.showSpt.node.width = this.haveTouchWordArr.length*40+40;
+}
+
+cls.touchEffectShow = function(node){
+    var labelNode = node.getChildByName("label");
+    labelNode.color = new cc.Color(255, 255, 255);
+    var spt = node.getComponent(cc.Sprite);
+    spt.enabled = true;
+}
+
+cls.touchEffectHide = function(node){
+    var labelNode = node.getChildByName("label");
+    labelNode.color = new cc.Color(0, 0, 0);
+    var spt = node.getComponent(cc.Sprite);
+    spt.enabled = false;
 }
 
 var isHaveTouched = function(arr, node){

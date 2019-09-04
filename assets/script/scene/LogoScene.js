@@ -24,7 +24,7 @@ cls.onLoad = function () {
     //GLobleIAP.init();
     this.init();
     setTimeout(function() {
-        //cc.director.loadScene("HotUpdateScene");
+        cc.director.loadScene("HotUpdateScene");
     }, 2000);
 }
 

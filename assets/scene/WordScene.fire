@@ -6175,9 +6175,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 253,
+      "g": 253,
+      "b": 253,
       "a": 255
     },
     "_contentSize": {
@@ -6317,8 +6317,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -300,
-      "y": 547.8,
+      "x": -270,
+      "y": 567.8,
       "z": 0
     },
     "_scale": {
@@ -6382,9 +6382,9 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 9,
-    "_left": 20,
+    "_left": 50,
     "_right": 0,
-    "_top": 120,
+    "_top": 100,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
