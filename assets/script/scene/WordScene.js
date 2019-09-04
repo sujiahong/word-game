@@ -52,8 +52,6 @@ cls.onLoad = function(){
     this.sentenceScroll.node.on("scroll-began", function(){
         console.log("scroll began ");
     });
-    // var url = cc.url.raw("resources/level.json");
-    // console.log(url)
     cc.loader.loadRes("config/level", function(err, data){
         console.log("77777777 ", err, data)
         if (err == null){
@@ -89,6 +87,10 @@ cls.initSentence = function(){
             wi = (scrollContent.width - nodeSize*slen)/(slen+1);
             var x = -(scrollContent.width/2 - ((wi+nodeSize/2)*(j+1) + (nodeSize/2)*j));
             var labNode = this.createShowWordLabel((curData.type[i] == "1") ? sentence[j]: "");
+            if (j == slen-1 && curData.type[i] == "0"){
+                var btn = labNode.getChildByName("question_button");
+                btn.on("click", this.onQuestion, this);
+            }
             labNode.setPosition(cc.v2(x, y));
             scrollContent.addChild(labNode);
             arr.push(labNode);
@@ -108,6 +110,10 @@ cls.nextEmptySentence = function(){
     for (var i = this.curSentenceIdx+1; i < typeArr.length; ++i){
         if (typeArr[i] == "0"){
             this.curSentenceIdx = i;
+            var arr = this.sentenceLabelNodeArr[i];
+            var labNode = arr[arr.length -1];
+            var btn = labNode.getChildByName("question_button");
+            btn.active = true;
             return;
         }
     }
@@ -341,8 +347,16 @@ cls.onRank = function(){
     console.log(TAG, "onRank");
 }
 
+cls.onQuestion = function(){
+    var curData = g_ada.levelData[g_ada.curLevel];
+    var explain = curData.explain[this.curSentenceIdx];
+    console.log(TAG, "onQuestion ", explain);
+
+}
+
 cls.onRefresh = function(){
     console.log(TAG, "onRefresh");
+    this.refreshDisk();
 }
 
 cls.onHint = function(){
