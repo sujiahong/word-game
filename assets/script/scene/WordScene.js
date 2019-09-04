@@ -129,11 +129,21 @@ cls.nextEmptySentence = function(){
         this.curSentenceIdx = -1;
         g_ada.curLevel++;
         this.initSentence();
+        if (this.curSentenceIdx >= 0){
+            var arr = this.sentenceLabelNodeArr[this.curSentenceIdx];
+            var labNode = arr[arr.length -1];
+            var btn = labNode.getChildByName("question_button");
+            btn.active = false;
+        }
         var curData = g_ada.levelData[g_ada.curLevel];
         var typeArr = curData.type;
         for (i = this.curSentenceIdx+1; i < typeArr.length; ++i){
             if (typeArr[i] == "0"){
                 this.curSentenceIdx = i;
+                var arr = this.sentenceLabelNodeArr[i];
+                var labNode = arr[arr.length -1];
+                var btn = labNode.getChildByName("question_button");
+                btn.active = true;
                 break;
             }
         }
@@ -215,6 +225,7 @@ cls.onDestroy = function(){
 }
 
 cls.onTouchStart = function(event){
+    this.explainSpt.node.active = false;
     this.touchSptNode = null;
     this.haveTouchWordArr = [];
     var startLocation = event.getLocation();
@@ -277,7 +288,6 @@ cls.onTouchMove = function(event){
 }
 
 cls.onTouchEnd = function(event){
-    this.explainSpt.node.active = false;
     var curData = g_ada.levelData[g_ada.curLevel];
     var sentence = curData.line[this.curSentenceIdx];
     if (this.showLabel.string == sentence){
