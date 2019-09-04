@@ -36,6 +36,8 @@ cls.properties = {
     authorLabel: cc.Label,
     sentenceScroll: cc.ScrollView,
     wordLabelPrefab: cc.Prefab,
+    explainSpt: cc.Sprite,
+    explainLabel: cc.Label,
 
     curSentenceIdx: -1,
 };
@@ -105,6 +107,12 @@ cls.initDisk = function(){
 }
 
 cls.nextEmptySentence = function(){
+    if (this.curSentenceIdx >= 0){
+        var arr = this.sentenceLabelNodeArr[this.curSentenceIdx];
+        var labNode = arr[arr.length -1];
+        var btn = labNode.getChildByName("question_button");
+        btn.active = false;
+    }
     var curData = g_ada.levelData[g_ada.curLevel];
     var typeArr = curData.type;
     for (var i = this.curSentenceIdx+1; i < typeArr.length; ++i){
@@ -269,6 +277,7 @@ cls.onTouchMove = function(event){
 }
 
 cls.onTouchEnd = function(event){
+    this.explainSpt.node.active = false;
     var curData = g_ada.levelData[g_ada.curLevel];
     var sentence = curData.line[this.curSentenceIdx];
     if (this.showLabel.string == sentence){
@@ -351,7 +360,8 @@ cls.onQuestion = function(){
     var curData = g_ada.levelData[g_ada.curLevel];
     var explain = curData.explain[this.curSentenceIdx];
     console.log(TAG, "onQuestion ", explain);
-
+    this.explainLabel.string = explain;
+    this.explainSpt.node.active = true;
 }
 
 cls.onRefresh = function(){
