@@ -10,19 +10,23 @@ g_ada.curLevel = 1;
 //const eventEmit = require("../util/event_emit");
 let touchTex = null;
 cc.loader.loadRes("UI/main/pan_word", function(err, tex){
-    console.log("11111   ",  err, tex)
     if (err == null){
         touchTex = tex;
     }
 });
 let wordTex = null;
 cc.loader.loadRes("UI/main/word", function(err, tex){
-    console.log("22222   ", err, tex)
     if (err == null){
         wordTex = tex;
     }
 });
-
+let lineTex = null;
+cc.loader.loadRes("UI/main/words4", function(err, tex){
+    console.log("22222   ", err, tex)
+    if (err == null){
+        lineTex = tex;
+    }
+});
 var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
@@ -256,10 +260,7 @@ cls.onTouchStart = function(event){
         this.touchSptNode = touchNode;
         this.touchEffectShow(touchNode);
         this.haveTouchWordArr.push(touchNode);
-        var node = new cc.Node("line");
-        node.addComponent(cc.Graphics);
-        touchNode.addChild(node);
-        this.showTouchLabelContent();
+        this.createLineNodeAndRefreshShowLabel(touchNode);
     }
 }
 
@@ -277,14 +278,11 @@ cls.onTouchMove = function(event){
             var worldPos = this.diskImg.node.convertToWorldSpaceAR(touchNode.getPosition());
             var pos = lineNode.parent.convertToNodeSpaceAR(worldPos);
             graph.lineTo(pos.x, pos.y);
+            graph.stroke();
             this.touchSptNode = touchNode;
             this.touchEffectShow(touchNode);
             this.haveTouchWordArr.push(touchNode);
-            var node = new cc.Node("line");
-            node.addComponent(cc.Graphics);
-            touchNode.addChild(node);
-            graph.stroke();
-            this.showTouchLabelContent();
+            this.createLineNodeAndRefreshShowLabel(touchNode);
         }else{
             var pos = this.touchSptNode.convertToNodeSpaceAR(moveLocation);
             graph.lineTo(pos.x, pos.y);
@@ -299,10 +297,7 @@ cls.onTouchMove = function(event){
                     this.haveTouchWordArr.pop();
                     this.touchSptNode = lastNode;
                     this.touchEffectShow(lastNode);
-                    var node = new cc.Node("line");
-                    node.addComponent(cc.Graphics);
-                    lastNode.addChild(node);
-                    this.showTouchLabelContent();
+                    this.createLineNodeAndRefreshShowLabel(lastNode);
                 }
             }
         }
@@ -332,6 +327,13 @@ cls.onTouchEnd = function(event){
         this.haveTouchWordArr = [];
         this.showTouchLabelContent();
     }
+}
+
+cls.createLineNodeAndRefreshShowLabel = function(parent){
+    var node = new cc.Node("line");
+    node.addComponent(cc.Graphics);
+    parent.addChild(node);
+    this.showTouchLabelContent();
 }
 
 cls.getTouchLabelNode = function(location){
