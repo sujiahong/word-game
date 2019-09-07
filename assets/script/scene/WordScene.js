@@ -9,13 +9,15 @@ g_ada.curLevel = 1;
 //const constant = require("../share/constant");
 //const eventEmit = require("../util/event_emit");
 let touchTex = null;
-cc.loader.load(cc.url.raw("resources/UI/主界面/椭圆 4 拷贝 2.png"), function(err, tex){
+cc.loader.loadRes("UI/main/pan_word", function(err, tex){
+    console.log("11111   ",  err, tex)
     if (err == null){
         touchTex = tex;
     }
 });
 let wordTex = null;
-cc.loader.load(cc.url.raw("resources/UI/主界面/矩形 1 拷贝 34.png"), function(err, tex){
+cc.loader.loadRes("UI/main/word", function(err, tex){
+    console.log("22222   ", err, tex)
     if (err == null){
         wordTex = tex;
     }
@@ -24,6 +26,15 @@ cc.loader.load(cc.url.raw("resources/UI/主界面/矩形 1 拷贝 34.png"), func
 var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
+    homeNode: cc.Node,
+    powerLabel: cc.Label,
+    timeLabel: cc.Label,
+    shareButton: cc.Button,
+    levelButton: cc.Button,
+    levelBtnLabel: cc.Label,
+    homeRankButton: cc.Button,
+
+    wordNode: cc.Node,
     backButton: cc.Button,
     rankButton: cc.Button,
     refreshButton: cc.Button,
@@ -44,6 +55,10 @@ cls.properties = {
 
 cls.onLoad = function(){
     var self =  this;
+    this.shareButton.node.on("click", this.onShare, this);
+    this.levelButton.node.on("click", this.onLevel, this);
+    this.homeRankButton.node.on("click", this.onRank, this);
+
     this.backButton.node.on("click", this.onBack, this);
     this.rankButton.node.on("click", this.onRank, this);
     this.refreshButton.node.on("click", this.onRefresh, this);
@@ -54,6 +69,7 @@ cls.onLoad = function(){
     this.sentenceScroll.node.on("scroll-began", function(){
         console.log("scroll began ");
     });
+    this.initHome();
     cc.loader.loadRes("config/level", function(err, data){
         console.log("77777777 ", err, data)
         if (err == null){
@@ -66,6 +82,10 @@ cls.onLoad = function(){
 
 }
 
+cls.initHome = function(){
+    this.levelBtnLabel.string = "第 " + g_ada.curLevel + " 关";
+}
+
 cls.initSentence = function(){
     this.sentenceLabelNodeArr = [];
     this.levelLabel.string = "第 " + g_ada.curLevel + " 关";
@@ -76,10 +96,9 @@ cls.initSentence = function(){
     scrollContent.removeAllChildren();
     var lineArr = curData.line;
     var len = lineArr.length;
-    scrollContent.height = 100 * len;
+    scrollContent.height = 120 * len;
     var nodeSize = 50;
     var wi = 0, hi = (scrollContent.height-nodeSize*len) / (len+1);
-    console.log("1111  ", JSON.stringify(scrollContent.getContentSize()))
     for (var i = 0; i < len; ++i){
         var sentence = lineArr[i];
         var slen = sentence.length;
@@ -179,13 +198,13 @@ cls.refreshDisk = function(){
 }
 
 cls.getWordPosArr = function(num){
-    const radius = 110;
+    const radius = 145;
     var intervalAngle = 360 / num;
     var arr = [];
     for(var i = 0; i < num; ++i){
         var angle = 90 - intervalAngle*i;
         var radian = angle*Math.PI/180;
-        var pos = cc.v2(Math.cos(radian)*radius, Math.sin(radian)*radius);
+        var pos = cc.v2(Math.cos(radian)*radius, Math.sin(radian)*radius+6);
         arr.push(pos);
     }
     return arr;
@@ -206,14 +225,16 @@ cls.createShowWordLabel = function(str){
 
 cls.createLinkWordLabel = function(str){
     var node = new cc.Node();
-    node.setContentSize(40, 40);
+    node.setContentSize(50, 50);
     var spt = node.addComponent(cc.Sprite);
     spt.spriteFrame = new cc.SpriteFrame(touchTex);
     spt.enabled = false;
     var childNode = new cc.Node("label");
     childNode.color = new cc.Color(0, 0, 0);
-    childNode.setContentSize(40, 40);
+    childNode.setContentSize(55, 55);
     var label = childNode.addComponent(cc.Label);
+    label.fontSize = 50
+    label.lineHeight = 50
     label.string = str;
     node.addChild(childNode);
     return node;
@@ -274,6 +295,7 @@ cls.onTouchMove = function(event){
                     lastNode.removeChild(lastNode.getChildByName("line"));
                     var node1 = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
                     node1.removeChild(node1.getChildByName("line"));
+                    this.touchEffectHide(node1);
                     this.haveTouchWordArr.pop();
                     this.touchSptNode = lastNode;
                     this.touchEffectShow(lastNode);
@@ -332,6 +354,10 @@ cls.showTouchLabelContent = function(){
     }
     this.showLabel.string = str;
     this.showSpt.node.width = this.haveTouchWordArr.length*40+40;
+    if (str == "")
+        this.showSpt.node.active = false;
+    else
+        this.showSpt.node.active = true;
 }
 
 cls.touchEffectShow = function(node){
@@ -357,9 +383,21 @@ var isHaveTouched = function(arr, node){
     return false;
 }
 
+cls.onShare = function(){
+    console.log(TAG, "onShare");
+}
+
+cls.onLevel = function(){
+    console.log(TAG, "onShare");
+    this.homeNode.active = false;
+    this.wordNode.active = true;
+}
+
 cls.onBack = function(){
     console.log(TAG, "onClose");
-    cc.director.loadScene("HomeClassScene");
+    this.homeNode.active = true;
+    this.wordNode.active = false;
+    this.initHome();
 }
 
 cls.onRank = function(){

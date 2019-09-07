@@ -1,16 +1,16 @@
 {
   "ver": "2.3.1",
-  "uuid": "f7e72635-e4f4-4b4c-9e4f-39bae2f86064",
+  "uuid": "374d62e8-ca35-4703-afed-f4c1f27f88fa",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
   "platformSettings": {},
   "subMetas": {
-    "矩形 1 拷贝 34": {
+    "word_right": {
       "ver": "1.0.4",
-      "uuid": "0d7a6da5-97a9-425f-a32c-84cd6fd7ec09",
-      "rawTextureUuid": "f7e72635-e4f4-4b4c-9e4f-39bae2f86064",
+      "uuid": "4f0977fa-1c7a-4d3c-b257-c6989d98b6d6",
+      "rawTextureUuid": "374d62e8-ca35-4703-afed-f4c1f27f88fa",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
