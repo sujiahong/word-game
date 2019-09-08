@@ -7167,6 +7167,9 @@
     "wordLabelPrefab": {
       "__uuid__": "542a1630-65d1-473f-ac42-208cf8cc2b7a"
     },
+    "linkLabelPrefab": {
+      "__uuid__": "298aaa63-12c2-4c35-8e18-da4fc2e6c56c"
+    },
     "explainSpt": {
       "__id__": 81
     },

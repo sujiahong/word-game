@@ -8,12 +8,7 @@ const g_ada = cc.g_ada;
 g_ada.curLevel = 1;
 //const constant = require("../share/constant");
 //const eventEmit = require("../util/event_emit");
-let touchTex = null;
-cc.loader.loadRes("UI/main/pan_word", function(err, tex){
-    if (err == null){
-        touchTex = tex;
-    }
-});
+
 let wordTex = null;
 cc.loader.loadRes("UI/main/word", function(err, tex){
     if (err == null){
@@ -51,6 +46,7 @@ cls.properties = {
     authorLabel: cc.Label,
     sentenceScroll: cc.ScrollView,
     wordLabelPrefab: cc.Prefab,
+    linkLabelPrefab: cc.Prefab,
     explainSpt: cc.Sprite,
     explainLabel: cc.Label,
 
@@ -75,7 +71,6 @@ cls.onLoad = function(){
     });
     this.initHome();
     cc.loader.loadRes("config/level", function(err, data){
-        console.log("77777777 ", err, data)
         if (err == null){
             g_ada.levelData = data.json;
             self.initSentence();
@@ -189,6 +184,7 @@ var getRandomIndexArr = function(num){
 
 cls.refreshDisk = function(){
     this.diskImg.node.removeAllChildren();
+    this.linkNodeArr = [];
     var curData = g_ada.levelData[g_ada.curLevel];
     var wordArr = curData.line[this.curSentenceIdx];
     var wordLen = wordArr.length;
@@ -198,6 +194,7 @@ cls.refreshDisk = function(){
         var lab = this.createLinkWordLabel(wordArr[idxArr[i]]);
         lab.setPosition(posArr[i]);
         this.diskImg.node.addChild(lab);
+        this.linkNodeArr.push(lab);
     }
 }
 
@@ -228,20 +225,11 @@ cls.createShowWordLabel = function(str){
 }
 
 cls.createLinkWordLabel = function(str){
-    var node = new cc.Node();
-    node.setContentSize(50, 50);
-    var spt = node.addComponent(cc.Sprite);
-    spt.spriteFrame = new cc.SpriteFrame(touchTex);
-    spt.enabled = false;
-    var childNode = new cc.Node("label");
-    childNode.color = new cc.Color(0, 0, 0);
-    childNode.setContentSize(55, 55);
-    var label = childNode.addComponent(cc.Label);
-    label.fontSize = 50
-    label.lineHeight = 50
+    var prefab = cc.instantiate(this.linkLabelPrefab);
+    var childNode = prefab.getChildByName("label");
+    var label = childNode.getComponent(cc.Label);
     label.string = str;
-    node.addChild(childNode);
-    return node;
+    return prefab;
 }
 
 cls.onDestroy = function(){
@@ -254,50 +242,48 @@ cls.onTouchStart = function(event){
     this.touchSptNode = null;
     this.haveTouchWordArr = [];
     var startLocation = event.getLocation();
-    console.log("touch start", startLocation.x, startLocation.y);
     var touchNode = this.getTouchLabelNode(startLocation);
+    console.log("touch start", startLocation.x, startLocation.y);
     if (touchNode){
         this.touchSptNode = touchNode;
         this.touchEffectShow(touchNode);
         this.haveTouchWordArr.push(touchNode);
-        this.createLineNodeAndRefreshShowLabel(touchNode);
+        this.createLineNode(touchNode);
+        this.showTouchLabelContent();
     }
 }
 
 cls.onTouchMove = function(event){
     if (this.touchSptNode){
         var moveLocation = event.getLocation();
-        var lineNode = this.touchSptNode.getChildByName("line");
-        var graph = lineNode.getComponent(cc.Graphics);
-        graph.clear();
-        graph.lineWidth = 10;
-        graph.strokeColor = new cc.Color(255, 0, 0);
-        graph.moveTo(0, 0);
+        var diskNode = this.diskImg.node;
+        var lineNode = diskNode.getChildByName("line-"+this.touchSptNode.uuid);
+        var srcPos = diskNode.convertToWorldSpaceAR(lineNode.getPosition());
         var touchNode = this.getTouchLabelNode(moveLocation);
         if (touchNode && !isHaveTouched(this.haveTouchWordArr, touchNode)){
-            var worldPos = this.diskImg.node.convertToWorldSpaceAR(touchNode.getPosition());
-            var pos = lineNode.parent.convertToNodeSpaceAR(worldPos);
-            graph.lineTo(pos.x, pos.y);
-            graph.stroke();
+            var trgPos = diskNode.convertToWorldSpaceAR(touchNode.getPosition());
+            lineNode.width = this.getLineNodeLength(srcPos, trgPos);
+            lineNode.angle = this.getLineNodeRotation(srcPos, trgPos);
             this.touchSptNode = touchNode;
             this.touchEffectShow(touchNode);
             this.haveTouchWordArr.push(touchNode);
-            this.createLineNodeAndRefreshShowLabel(touchNode);
+            this.createLineNode(touchNode);
+            this.showTouchLabelContent();
         }else{
-            var pos = this.touchSptNode.convertToNodeSpaceAR(moveLocation);
-            graph.lineTo(pos.x, pos.y);
-            graph.stroke();
+            lineNode.width = this.getLineNodeLength(srcPos, moveLocation);
+            lineNode.angle = this.getLineNodeRotation(srcPos, moveLocation);
             var lastNode = this.haveTouchWordArr[this.haveTouchWordArr.length-2];
             if (lastNode && touchNode){
                 if (lastNode.uuid == touchNode.uuid){
-                    lastNode.removeChild(lastNode.getChildByName("line"));
+                    diskNode.removeChild(diskNode.getChildByName("line-"+lastNode.uuid));
                     var node1 = this.haveTouchWordArr[this.haveTouchWordArr.length-1];
-                    node1.removeChild(node1.getChildByName("line"));
+                    diskNode.removeChild(diskNode.getChildByName("line-"+node1.uuid));
                     this.touchEffectHide(node1);
                     this.haveTouchWordArr.pop();
                     this.touchSptNode = lastNode;
                     this.touchEffectShow(lastNode);
-                    this.createLineNodeAndRefreshShowLabel(lastNode);
+                    this.createLineNode(lastNode);
+                    this.showTouchLabelContent();
                 }
             }
         }
@@ -322,22 +308,38 @@ cls.onTouchEnd = function(event){
         for(var i = 0; i < this.haveTouchWordArr.length; ++i){
             var node = this.haveTouchWordArr[i];
             this.touchEffectHide(node);
-            node.removeChild(node.getChildByName("line"));
+            this.diskImg.node.removeChild(this.diskImg.node.getChildByName("line-"+node.uuid));
         }
         this.haveTouchWordArr = [];
         this.showTouchLabelContent();
     }
 }
 
-cls.createLineNodeAndRefreshShowLabel = function(parent){
-    var node = new cc.Node("line");
-    node.addComponent(cc.Graphics);
-    parent.addChild(node);
-    this.showTouchLabelContent();
+cls.createLineNode = function(touchNode){
+    var node = new cc.Node("line-"+touchNode.uuid);
+    node.setAnchorPoint(0, 0.5);
+    var spt = node.addComponent(cc.Sprite);
+    spt.spriteFrame = new cc.SpriteFrame(lineTex);
+    this.diskImg.node.addChild(node)
+    node.width = 1;
+    node.setPosition(touchNode.getPosition());
+}
+
+cls.getLineNodeLength = function(srcPos, trgPos){
+    var dx = trgPos.x - srcPos.x;
+    var dy = trgPos.y - srcPos.y;
+    return Math.sqrt(dx*dx + dy*dy);
+}
+
+cls.getLineNodeRotation = function(srcPos, trgPos){
+    var dx = trgPos.x - srcPos.x;
+    var dy = trgPos.y - srcPos.y;
+    var angle = Math.atan2(dx, dy)*180/Math.PI;
+    return 90 - angle;
 }
 
 cls.getTouchLabelNode = function(location){
-    var arr = this.diskImg.node.getChildren();
+    var arr = this.linkNodeArr;
     for (var i = 0; i < arr.length; ++i){
         var rect = arr[i].getBoundingBoxToWorld();
         if (rect.contains(location)){
