@@ -17,7 +17,6 @@ cc.loader.loadRes("UI/main/word", function(err, tex){
 });
 let lineTex = null;
 cc.loader.loadRes("UI/main/words4", function(err, tex){
-    console.log("22222   ", err, tex)
     if (err == null){
         lineTex = tex;
     }
@@ -32,6 +31,8 @@ cls.properties = {
     levelButton: cc.Button,
     levelBtnLabel: cc.Label,
     homeRankButton: cc.Button,
+    userAvatar: cc.Sprite,
+    userNameLabel: cc.Label,
 
     wordNode: cc.Node,
     backButton: cc.Button,
@@ -49,6 +50,8 @@ cls.properties = {
     linkLabelPrefab: cc.Prefab,
     explainSpt: cc.Sprite,
     explainLabel: cc.Label,
+
+    rankPanel: cc.Sprite,
 
     curSentenceIdx: -1,
 };
@@ -78,7 +81,52 @@ cls.onLoad = function(){
             self.initDisk();
         }
     });
+    this.initWX();
+}
 
+cls.initWX = function(){
+    if (typeof wx === "undefined")
+        return
+    console.log("11111  1111   ", wx)
+    const info = wx.getSystemInfoSync()
+    // wx.getUserInfo({
+    //     success: function(res){
+    //         console.log("2222 ", res)
+    //     }
+    // })
+    var self = this;
+    var button = wx.createUserInfoButton({
+        type: "text",
+        text: "获取用户信息",
+        style: {
+            left: 0,
+            top: 76,
+            width: 150,
+            height: 40,
+            lineHeight: 40,
+            backgroundColor: "#ff0000",
+            color: "#ffffff",
+            textAlign: "center",
+            fontSize: 16,
+            borderRadius: 4
+        }
+    });
+    button.onTap((res)=>{
+        console.log("222   ", res)
+        var userInfo = res.userInfo;
+        this.userNameLabel.string = userInfo.nickName;
+        cc.loader.load({url: userInfo.avatarUrl, type: "png"}, function(err, tex){
+            if (err){
+                return console.log(err);
+            }
+            var spt = self.userAvatar.getComponent(cc.Sprite);
+            spt.spriteFrame = new cc.SpriteFrame(tex);
+        });
+
+        wx.getOpenDataContext().postMessage({
+            message: "111111  user info get info  1111"
+        });
+    });
 }
 
 cls.initHome = function(){
@@ -406,6 +454,7 @@ cls.onBack = function(){
 
 cls.onRank = function(){
     console.log(TAG, "onRank");
+    this.rankPanel.node.active = true;
 }
 
 cls.onQuestion = function(){
