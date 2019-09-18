@@ -5,7 +5,7 @@
       true
     ]
   ],
-  "design-resolution-height": 1386,
+  "design-resolution-height": 1382,
   "design-resolution-width": 640,
   "excluded-modules": [],
   "facebook": {
@@ -18,18 +18,18 @@
       "enable": false
     }
   },
-  "fit-height": true,
-  "fit-width": false,
+  "fit-height": false,
+  "fit-width": true,
   "group-list": [
     "default"
   ],
-  "last-module-event-record-time": 1568822588585,
+  "last-module-event-record-time": 1568133705977,
   "simulator-orientation": false,
   "simulator-resolution": {
     "height": 640,
     "width": 960
   },
-  "start-scene": "current",
   "use-customize-simulator": true,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": false,
+  "start-scene": "current"
 }

@@ -51,7 +51,7 @@ cls.properties = {
     explainSpt: cc.Sprite,
     explainLabel: cc.Label,
 
-    rankPanel: cc.Sprite,
+    rankPanel: cc.Node,
 
     curSentenceIdx: -1,
 };
@@ -454,7 +454,7 @@ cls.onBack = function(){
 
 cls.onRank = function(){
     console.log(TAG, "onRank");
-    this.rankPanel.node.active = true;
+    this.rankPanel.active = true;
 }
 
 cls.onQuestion = function(){
