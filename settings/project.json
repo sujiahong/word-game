@@ -26,10 +26,9 @@
   "last-module-event-record-time": 1568822588585,
   "simulator-orientation": false,
   "simulator-resolution": {
-    "height": 640,
-    "width": 960
+    "height": 1386,
+    "width": 640
   },
-  "start-scene": "current",
   "use-customize-simulator": true,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": true
 }

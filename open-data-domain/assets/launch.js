@@ -9,17 +9,20 @@
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 "use strict";
 const TAG = "open data launch.js";
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
         rankScroll: cc.ScrollView,
         friendPrefab: cc.Prefab,
+        backButton: cc.Button,
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this.backButton.node.on("click", this.onBack, this);
         console.log(TAG, "onload onload")
         var scrollContent = this.rankScroll.content;
         console.log(scrollContent.width, scrollContent.height)
@@ -39,6 +42,9 @@ cc.Class({
         wx.onMessage((data)=>{
             console.log(TAG, "2222222", data.message);
         });
+        // wx.getOpenDataContext().postMessage({
+        //     message: "111111  jdhsfslf;k  1111"
+        // });
         var renderTypeStr = "canvas";
         if (cc.game.renderType == cc.game.RENDER_TYPE_WEBGL){
             renderTypeStr = "webGL";
@@ -63,6 +69,9 @@ cc.Class({
             }
         });
     },
-
+    onBack(){
+        console.log("!!! onBack !!")
+        //this.node.active = false;
+    }
     // update (dt) {},
 });

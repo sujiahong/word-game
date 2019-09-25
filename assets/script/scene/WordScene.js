@@ -6,8 +6,9 @@ if (!cc.g_ada){
 }
 const g_ada = cc.g_ada;
 g_ada.curLevel = 1;
-//const constant = require("../share/constant");
-//const eventEmit = require("../util/event_emit");
+g_ada.curPower = 5;
+g_ada.timeCircle = 900;
+const util = require("../util/util");
 
 let wordTex = null;
 cc.loader.loadRes("UI/main/word", function(err, tex){
@@ -20,6 +21,16 @@ cc.loader.loadRes("UI/main/words4", function(err, tex){
     if (err == null){
         lineTex = tex;
     }
+});
+
+cc.loader.downloader.loadSubpackage("resources", function(err){
+    console.log(err, "分包加载1111！！");
+});
+cc.loader.downloader.loadSubpackage("scene", function(err){
+    console.log(err, "分包加载22222！！");
+});
+cc.loader.downloader.loadSubpackage("prefab", function(err){
+    console.log(err, "分包加载22222！！");
 });
 var cls = {};
 cls.extends = cc.Component;
@@ -54,6 +65,7 @@ cls.properties = {
     rankPanel: cc.Node,
 
     curSentenceIdx: -1,
+    updateTime: 0,
 };
 
 cls.onLoad = function(){
@@ -88,6 +100,9 @@ cls.initWX = function(){
     if (typeof wx === "undefined")
         return
     console.log("11111  1111   ", wx)
+    wx.onMessage((data)=>{
+        console.log(TAG, "2222222", data.message);
+    });
     const info = wx.getSystemInfoSync()
     // wx.getUserInfo({
     //     success: function(res){
@@ -130,7 +145,38 @@ cls.initWX = function(){
 }
 
 cls.initHome = function(){
+    g_ada.curPower = Number(util.getLocalStore("CUR_POWER") || 5);
+    g_ada.timeCircle = Number(util.getLocalStore("TIME_CIRCLE") || 900)
+    g_ada.curLevel = Number(util.getLocalStore("CUR_LEVEL") || 1);
+    this.powerLabel.string = g_ada.curPower;
+    this.timeLabel.string = getLocalTime(g_ada.timeCircle);
     this.levelBtnLabel.string = "第 " + g_ada.curLevel + " 关";
+    this.updateTime = 0;
+}
+
+var getLocalTime = function(time){
+    var m = Math.floor(time / 60);
+    var s = time % 60;
+    return String(m) + ":" + String(s);
+}
+
+cls.refreshTime = function(){
+    if (g_ada.curPower < 5){
+        g_ada.timeCircle--;
+        util.setLocalStore("TIME_CIRCLE", g_ada.timeCircle);
+        if (g_ada.timeCircle % 60 == 0){
+            g_ada.curPower++;
+        }
+        this.timeLabel.string = getLocalTime(g_ada.timeCircle);
+    }
+}
+
+cls.update = function(dt){
+    this.updateTime += dt;
+    if (this.updateTime >= 1){
+        this.refreshTime();
+        this.updateTime = 0;
+    }
 }
 
 cls.initSentence = function(){
@@ -441,8 +487,12 @@ cls.onShare = function(){
 
 cls.onLevel = function(){
     console.log(TAG, "onShare");
-    this.homeNode.active = false;
-    this.wordNode.active = true;
+    if (g_ada.curPower > 0){
+        this.homeNode.active = false;
+        this.wordNode.active = true;
+        g_ada.curPower--;
+        util.setLocalStore("CUR_POWER", g_ada.curPower);
+    }
 }
 
 cls.onBack = function(){
