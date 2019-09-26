@@ -1,14 +1,30 @@
 "use strict";
 const TAG = "WordScene.js";
+const util = require("../util/util");
 
 if (!cc.g_ada){
     cc.g_ada = {};
 }
 const g_ada = cc.g_ada;
-g_ada.curLevel = 1;
-g_ada.curPower = 5;
-g_ada.timeCircle = 900;
-const util = require("../util/util");
+// util.rmvLocalStore("CUR_POWER");
+// util.rmvLocalStore("TIME_CIRCLE");
+// util.rmvLocalStore("CUR_LEVEL");
+g_ada.curLevel = Number(util.getLocalStore("CUR_LEVEL") || 1);
+var curpower = util.getLocalStore("CUR_POWER");
+if (curpower){
+    g_ada.curPower = Number(curpower);
+}else{
+    if (curpower !== 0)
+        g_ada.curPower = 5;
+    else
+        g_ada.curPower = Number(curpower);
+}
+var curtime = util.getLocalStore("TIME_CIRCLE");
+if (curtime){
+    g_ada.timeCircle = Number(curtime);
+}else{
+    g_ada.timeCircle = 900;
+}
 
 let wordTex = null;
 cc.loader.loadRes("UI/main/word", function(err, tex){
@@ -142,9 +158,7 @@ cls.initWX = function(){
 }
 
 cls.initHome = function(){
-    g_ada.curPower = Number(util.getLocalStore("CUR_POWER") || 5);
-    g_ada.timeCircle = Number(util.getLocalStore("TIME_CIRCLE") || 900)
-    g_ada.curLevel = Number(util.getLocalStore("CUR_LEVEL") || 1);
+    console.log("##### ", g_ada.curPower, g_ada.timeCircle, g_ada.curLevel)
     this.powerLabel.string = g_ada.curPower;
     this.timeLabel.string = getLocalTime(g_ada.timeCircle);
     this.levelBtnLabel.string = "第 " + g_ada.curLevel + " 关";
@@ -160,10 +174,12 @@ var getLocalTime = function(time){
 cls.refreshTime = function(){
     if (g_ada.curPower < 5){
         g_ada.timeCircle--;
-        util.setLocalStore("TIME_CIRCLE", g_ada.timeCircle);
-        if (g_ada.timeCircle % 60 == 0){
+        if (g_ada.timeCircle === 0){
             g_ada.curPower++;
+            this.powerLabel.string = g_ada.curPower;
+            g_ada.timeCircle = 240
         }
+        util.setLocalStore("TIME_CIRCLE", g_ada.timeCircle);
         this.timeLabel.string = getLocalTime(g_ada.timeCircle);
     }
 }
@@ -178,7 +194,6 @@ cls.update = function(dt){
 
 cls.initSentence = function(){
     this.sentenceLabelNodeArr = [];
-    this.levelBtnLabel.string = "第 " + g_ada.curLevel + " 关";
     this.levelLabel.string = "第 " + g_ada.curLevel + " 关";
     var curData = g_ada.levelData[g_ada.curLevel];
     this.titleLabel.string = curData.name;
@@ -238,6 +253,7 @@ cls.nextEmptySentence = function(){
     if (i >= typeArr.length){
         this.curSentenceIdx = -1;
         g_ada.curLevel++;
+        util.setLocalStore("CUR_LEVEL", g_ada.curLevel);
         this.initSentence();
         if (this.curSentenceIdx >= 0){
             var arr = this.sentenceLabelNodeArr[this.curSentenceIdx];
@@ -484,7 +500,7 @@ cls.onShare = function(){
 }
 
 cls.onLevel = function(){
-    console.log(TAG, "onShare");
+    console.log(TAG, "onLevel");
     if (g_ada.curPower > 0){
         this.homeNode.active = false;
         this.wordNode.active = true;
@@ -494,7 +510,7 @@ cls.onLevel = function(){
 }
 
 cls.onBack = function(){
-    console.log(TAG, "onClose");
+    console.log(TAG, "onBack");
     this.homeNode.active = true;
     this.wordNode.active = false;
     this.initHome();
