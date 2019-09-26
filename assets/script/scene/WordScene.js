@@ -178,6 +178,7 @@ cls.update = function(dt){
 
 cls.initSentence = function(){
     this.sentenceLabelNodeArr = [];
+    this.levelBtnLabel.string = "第 " + g_ada.curLevel + " 关";
     this.levelLabel.string = "第 " + g_ada.curLevel + " 关";
     var curData = g_ada.levelData[g_ada.curLevel];
     this.titleLabel.string = curData.name;
