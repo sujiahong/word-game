@@ -16,7 +16,6 @@ cc.Class({
     properties: {
         rankScroll: cc.ScrollView,
         friendPrefab: cc.Prefab,
-        backButton: cc.Button,
     },
 
     // LIFE-CYCLE CALLBACKS:

@@ -26,12 +26,7 @@ cc.loader.loadRes("UI/main/words4", function(err, tex){
 cc.loader.downloader.loadSubpackage("resources", function(err){
     console.log(err, "分包加载1111！！");
 });
-cc.loader.downloader.loadSubpackage("scene", function(err){
-    console.log(err, "分包加载22222！！");
-});
-cc.loader.downloader.loadSubpackage("prefab", function(err){
-    console.log(err, "分包加载22222！！");
-});
+
 var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
@@ -63,6 +58,7 @@ cls.properties = {
     explainLabel: cc.Label,
 
     rankPanel: cc.Node,
+    rankCloseButton: cc.Button,
 
     curSentenceIdx: -1,
     updateTime: 0,
@@ -77,7 +73,8 @@ cls.onLoad = function(){
     this.backButton.node.on("click", this.onBack, this);
     this.rankButton.node.on("click", this.onRank, this);
     this.refreshButton.node.on("click", this.onRefresh, this);
-    this.hintButton.node.on("click", this.onHint, this); 
+    this.hintButton.node.on("click", this.onHint, this);
+    this.rankCloseButton.node.on("click", this.onRankClose, this);
     this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
     this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
     this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -115,7 +112,7 @@ cls.initWX = function(){
         text: "获取用户信息",
         style: {
             left: 0,
-            top: 76,
+            top: 176,
             width: 150,
             height: 40,
             lineHeight: 40,
@@ -522,6 +519,10 @@ cls.onRefresh = function(){
 
 cls.onHint = function(){
     console.log(TAG, "onHint");
+}
+
+cls.onRankClose = function(){
+    this.rankPanel.active = false;
 }
 
 cc.Class(cls);
