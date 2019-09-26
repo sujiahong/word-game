@@ -1,12 +1,12 @@
 "use strict";
 const TAG = "WordScene.js";
 const util = require("../util/util");
-
+const uiHelper = require("../util/ui_helper");
 if (!cc.g_ada){
     cc.g_ada = {};
 }
 const g_ada = cc.g_ada;
-// util.rmvLocalStore("CUR_POWER");
+util.rmvLocalStore("CUR_POWER");
 // util.rmvLocalStore("TIME_CIRCLE");
 // util.rmvLocalStore("CUR_LEVEL");
 g_ada.curLevel = Number(util.getLocalStore("CUR_LEVEL") || 1);
@@ -15,7 +15,7 @@ if (curpower){
     g_ada.curPower = Number(curpower);
 }else{
     if (curpower !== 0)
-        g_ada.curPower = 5;
+        g_ada.curPower = 5000;
     else
         g_ada.curPower = Number(curpower);
 }
@@ -420,6 +420,7 @@ cls.onTouchEnd = function(event){
         }
         this.haveTouchWordArr = [];
         this.showTouchLabelContent();
+        uiHelper.playShakeAction(this.showSpt.node);
     }
 }
 
@@ -458,18 +459,24 @@ cls.getTouchLabelNode = function(location){
 }
 
 cls.showTouchLabelContent = function(){
+    var self = this;
     var str = "";
     for (var i = 0; i < this.haveTouchWordArr.length; ++i){
         var labelNode = this.haveTouchWordArr[i].getChildByName("label");
         var label = labelNode.getComponent(cc.Label);
         str += label.string;
     }
-    this.showLabel.string = str;
-    this.showSpt.node.width = this.haveTouchWordArr.length*40+40;
-    if (str == "")
-        this.showSpt.node.active = false;
-    else
+    if (str == ""){
+        util.delayRun(this.showSpt.node, 0.5, function(){
+            self.showSpt.node.width = self.haveTouchWordArr.length*40+40;
+            self.showLabel.string = str;
+            self.showSpt.node.active = false;
+        });
+    }else{
+        this.showLabel.string = str;
+        this.showSpt.node.width = this.haveTouchWordArr.length*40+40;
         this.showSpt.node.active = true;
+    }
 }
 
 cls.touchEffectShow = function(node){

@@ -42,3 +42,29 @@ exp.createSprite = function(){
     node.color = cc.Color.GREEN;
     node.parent = this.garbage.node.parent;
 }
+
+exp.playShakeAction = function(node){
+    if (!node){
+        return
+    }
+    var pos = node.getPosition();
+    var action = cc.sequence(
+        cc.moveBy(0.01, 0, 10),
+        cc.callFunc(function(){
+            node.setPosition(pos);
+        }),
+        cc.moveBy(0.01, 0, -7),
+        cc.callFunc(function(){
+            node.setPosition(pos);
+        }),
+        cc.moveBy(0.01, 6, 0),
+        cc.callFunc(function(){
+            node.setPosition(pos);
+        }),
+        cc.moveBy(0.01, -7, 0));
+        cc.callFunc(function(){
+            node.setPosition(pos);
+        });
+    var repeatAction = cc.repeat(action, 5);
+    node.runAction(repeatAction);
+}
