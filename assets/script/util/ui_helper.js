@@ -48,23 +48,25 @@ exp.playShakeAction = function(node){
         return
     }
     var pos = node.getPosition();
+    var mx = Math.random()*10000%3 + 6;
+    var my = Math.random()*10000%3 + 6;
     var action = cc.sequence(
-        cc.moveBy(0.01, 0, 10),
+        cc.moveBy(0.01, 0, mx),
         cc.callFunc(function(){
             node.setPosition(pos);
         }),
-        cc.moveBy(0.01, 0, -7),
+        cc.moveBy(0.01, 0, -mx),
         cc.callFunc(function(){
             node.setPosition(pos);
         }),
-        cc.moveBy(0.01, 6, 0),
+        cc.moveBy(0.01, my, 0),
         cc.callFunc(function(){
             node.setPosition(pos);
         }),
-        cc.moveBy(0.01, -7, 0));
+        cc.moveBy(0.01, -my, 0),
         cc.callFunc(function(){
             node.setPosition(pos);
-        });
+        }));
     var repeatAction = cc.repeat(action, 5);
-    node.runAction(repeatAction);
+    node.runAction(cc.speed(repeatAction, 1.5));
 }
