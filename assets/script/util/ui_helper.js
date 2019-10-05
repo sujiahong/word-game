@@ -70,3 +70,30 @@ exp.playShakeAction = function(node){
     var repeatAction = cc.repeat(action, 5);
     node.runAction(cc.speed(repeatAction, 1.5));
 }
+
+exp.playMoveAction = function(node, tgtPos){
+    if (!node){
+        return;
+    }
+    var pos = node.getPosition();
+    var action = cc.sequence(
+        cc.moveTo(1, tgtPos),
+        cc.callFunc(function(){
+            node.setPosition(pos);
+            node.removeFromParent();
+        })
+    );
+    node.runAction(action);
+}
+
+exp.playExchangePosAction = function(node1, node2){
+    if (!node1 || !node2){
+        return;
+    }
+    var pos1 = node1.getPosition();
+    var pos2 = node2.getPosition();
+    var action1 = cc.moveTo(0.5, pos2);
+    var action2 = cc.moveTo(0.5, pos1);
+    node1.runAction(action1);
+    node2.runAction(action2);
+}

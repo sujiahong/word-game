@@ -193,6 +193,7 @@ cls.update = function(dt){
 }
 
 cls.initSentence = function(){
+    this.curSentenceIdx = -1;
     this.sentenceLabelNodeArr = [];
     this.levelLabel.string = "第 " + g_ada.curLevel + " 关";
     var curData = g_ada.levelData[g_ada.curLevel];
@@ -240,6 +241,7 @@ cls.nextEmptySentence = function(){
     }
     var curData = g_ada.levelData[g_ada.curLevel];
     var typeArr = curData.type;
+    console.log("2222   ", this.curSentenceIdx)
     for (var i = this.curSentenceIdx+1; i < typeArr.length; ++i){
         if (typeArr[i] == "0"){
             this.curSentenceIdx = i;
@@ -301,6 +303,7 @@ cls.refreshDisk = function(){
     for (var i = 0; i < wordLen; ++i){
         var lab = this.createLinkWordLabel(wordArr[idxArr[i]]);
         lab.setPosition(posArr[i]);
+        lab.name = "node-" + String(i);
         this.diskImg.node.addChild(lab);
         this.linkNodeArr.push(lab);
     }
@@ -399,17 +402,14 @@ cls.onTouchMove = function(event){
 }
 
 cls.onTouchEnd = function(event){
+    var self = this
     var curData = g_ada.levelData[g_ada.curLevel];
     var sentence = curData.line[this.curSentenceIdx];
-    if (this.showLabel.string == sentence){
-        var nodeLabelArr = this.sentenceLabelNodeArr[this.curSentenceIdx];
-        for(var i = 0; i < nodeLabelArr.length; ++i){
-            var labelNode = nodeLabelArr[i].getChildByName("label");
-            var label = labelNode.getComponent(cc.Label);
-            label.string = sentence[i];
-        }
-        this.nextEmptySentence();
-        this.refreshDisk();
+    if (this.showLabel.string == sentence){//////正确
+        this.wordMoveAction(sentence, function(){
+            self.nextEmptySentence();
+            self.refreshDisk();
+        });
         this.haveTouchWordArr = [];
         this.showTouchLabelContent();
     }else{
@@ -422,6 +422,40 @@ cls.onTouchEnd = function(event){
         this.showTouchLabelContent();
         uiHelper.playShakeAction(this.showSpt.node);
     }
+}
+
+cls.wordMoveAction = function(sentence, next){
+    var posArr = []
+    var nodeLabelArr = this.sentenceLabelNodeArr[this.curSentenceIdx];
+    for(var i = 0; i < nodeLabelArr.length; ++i){
+        var pos = this.sentenceScroll.content.convertToWorldSpaceAR(nodeLabelArr[i].getPosition())
+        console.log("!!!!!     ", JSON.stringify(pos))
+        posArr.push(pos);
+    }
+    var showPos = this.showSpt.node.convertToWorldSpaceAR(this.showLabel.node.getPosition())
+    console.log("@@@   ", JSON.stringify(showPos))
+    for (var i = 0; i < posArr.length; ++i){
+        var node = createLabel(sentence[i]);
+        this.node.addChild(node);
+        node.setPosition(this.node.convertToNodeSpaceAR(showPos));
+        uiHelper.playMoveAction(node, this.node.convertToNodeSpaceAR(posArr[i]));
+    }
+    util.delayRun(this.node, 1, function(){
+        for(var i = 0; i < nodeLabelArr.length; ++i){
+            var labelNode = nodeLabelArr[i].getChildByName("label");
+            var label = labelNode.getComponent(cc.Label);
+            label.string = sentence[i];
+        }
+        next();
+    });
+}
+
+var createLabel = function(str){
+    var node = new cc.Node()
+    node.color = new cc.Color(0, 0, 0);
+    var label = node.addComponent(cc.Label)
+    label.string = str;
+    return node;
 }
 
 cls.createLineNode = function(touchNode){
@@ -538,7 +572,44 @@ cls.onQuestion = function(){
 
 cls.onRefresh = function(){
     console.log(TAG, "onRefresh");
-    this.refreshDisk();
+    this.changePosDisk();
+}
+
+cls.changePosDisk = function(){
+    var diskNode = this.diskImg.node;
+    var curData = g_ada.levelData[g_ada.curLevel];
+    var wordArr = curData.line[this.curSentenceIdx];
+    var wordLen = wordArr.length;
+    var arr = getExchangeIdxArr(wordLen);
+    for (var i = 0; i < arr.length; ++i){
+        var inArr = arr[i];
+        if (inArr.length > 1){
+            var lab1 = diskNode.getChildByName("node-"+String(inArr[0]));
+            var lab2 = diskNode.getChildByName("node-"+String(inArr[1]));
+            uiHelper.playExchangePosAction(lab1, lab2);
+        }
+    }
+}
+
+var getExchangeIdxArr = function(len){
+    var arr = [];
+    var initArr = [];
+    for (var i = 0; i < len; ++i){
+        initArr.push(i);
+    }
+    for (var i = 0; i < len; ++i){
+        var tempArr = [];
+        for (var j = 0; j < 2; ++j){
+            if (initArr.length > 0){
+                var ran = Math.floor(Math.random()*1000%initArr.length);
+                tempArr.push(initArr[ran]);
+                initArr.splice(ran, 1);
+            }else{
+                return arr;
+            }
+        }
+        arr.push(tempArr);
+    }
 }
 
 cls.onHint = function(){
