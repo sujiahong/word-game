@@ -1,0 +1,33 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "back_rt",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.08333333333333333,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "props": {
+      "position": [
+        {
+          "frame": 0,
+          "value": [
+            -270,
+            40,
+            0
+          ]
+        },
+        {
+          "frame": 0.08333333333333333,
+          "value": [
+            -370,
+            40,
+            0
+          ]
+        }
+      ]
+    }
+  },
+  "events": []
+}

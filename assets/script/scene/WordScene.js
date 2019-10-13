@@ -47,9 +47,11 @@ var cls = {};
 cls.extends = cc.Component;
 cls.properties = {
     homeNode: cc.Node,
+    powerNode: cc.Node,
     powerLabel: cc.Label,
     timeLabel: cc.Label,
     shareButton: cc.Button,
+    logoImg: cc.Sprite,
     levelButton: cc.Button,
     levelBtnLabel: cc.Label,
     homeRankButton: cc.Button,
@@ -309,6 +311,68 @@ cls.refreshDisk = function(){
     }
 }
 
+cls.playWordAnim = function(){
+    var backAnim = this.backButton.node.getComponent(cc.Animation);
+    backAnim.play("back");
+    var rankAnim = this.rankButton.node.getComponent(cc.Animation);
+    rankAnim.play("rank");
+    var refreshAnim = this.refreshButton.node.getComponent(cc.Animation);
+    refreshAnim.play("refresh");
+    var hintAnim = this.hintButton.node.getComponent(cc.Animation);
+    hintAnim.play("hint");
+    var diskAnim = this.diskImg.node.getComponent(cc.Animation);
+    diskAnim.play("disk");
+}
+
+cls.playBackWordAnim = function(next){
+    var backAnim = this.backButton.node.getComponent(cc.Animation);
+    backAnim.play("back_rt");
+    var rankAnim = this.rankButton.node.getComponent(cc.Animation);
+    rankAnim.play("rank_rt");
+    var refreshAnim = this.refreshButton.node.getComponent(cc.Animation);
+    refreshAnim.play("refresh_rt");
+    var hintAnim = this.hintButton.node.getComponent(cc.Animation);
+    hintAnim.play("hint_rt");
+    var diskAnim = this.diskImg.node.getComponent(cc.Animation);
+    diskAnim.play("disk_rt");
+    var finished = function(){
+        next();
+        diskAnim.off("finished", finished);
+    }
+    diskAnim.on("finished", finished);
+}
+
+cls.playHomeAnim = function(){
+    var levelAnim = this.levelButton.node.getComponent(cc.Animation);
+    levelAnim.play("level");
+    var homeRankAnim = this.homeRankButton.node.getComponent(cc.Animation);
+    homeRankAnim.play("home_rank");
+    var powerAnim = this.powerNode.getComponent(cc.Animation);
+    powerAnim.play("power");
+    var logoAnim = this.logoImg.node.getComponent(cc.Animation);
+    logoAnim.play("logo");
+}
+
+cls.playShowExplainAnim = function(next){
+    var showAnim = this.explainSpt.node.getComponent(cc.Animation);
+    var finished = function(){
+        next ? next() : null;
+        showAnim.off("finished", finished);
+    }
+    showAnim.play("explain");
+    showAnim.on("finished", finished);
+}
+
+cls.playHideExplainAnim = function(next){
+    var hideAnim = this.explainSpt.node.getComponent(cc.Animation);
+    var finished = function(){
+        next ? next() : null;
+        hideAnim.off("finished", finished);
+    }
+    hideAnim.play("explain_rt");
+    hideAnim.on("finished", finished);
+}
+
 cls.getWordPosArr = function(num){
     const radius = 145;
     var intervalAngle = 360 / num;
@@ -349,7 +413,12 @@ cls.onDestroy = function(){
 }
 
 cls.onTouchStart = function(event){
-    this.explainSpt.node.active = false;
+    if (this.explainSpt.node.active){
+        var self = this;
+        this.playHideExplainAnim(function(){
+            self.explainSpt.node.active = false;
+        });
+    }
     this.touchSptNode = null;
     this.haveTouchWordArr = [];
     var startLocation = event.getLocation();
@@ -547,14 +616,19 @@ cls.onLevel = function(){
         this.wordNode.active = true;
         g_ada.curPower--;
         util.setLocalStore("CUR_POWER", g_ada.curPower);
+        this.playWordAnim();
     }
 }
 
 cls.onBack = function(){
     console.log(TAG, "onBack");
-    this.homeNode.active = true;
-    this.wordNode.active = false;
-    this.initHome();
+    var self = this;
+    this.playBackWordAnim(function(){
+        self.homeNode.active = true;
+        self.wordNode.active = false;
+        self.playHomeAnim();
+        self.initHome();
+    });
 }
 
 cls.onRank = function(){
@@ -568,6 +642,7 @@ cls.onQuestion = function(){
     console.log(TAG, "onQuestion ", explain);
     this.explainLabel.string = explain;
     this.explainSpt.node.active = true;
+    this.playShowExplainAnim();
 }
 
 cls.onRefresh = function(){
