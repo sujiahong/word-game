@@ -101,6 +101,7 @@ cls.onLoad = function(){
     });
     this.initHome();
     cc.loader.loadRes("config/level", function(err, data){
+        console.log(err, data)
         if (err == null){
             g_ada.levelData = data.json;
             self.initSentence();
