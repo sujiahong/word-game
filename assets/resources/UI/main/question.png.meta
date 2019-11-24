@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "f21df4ac-f3d5-4ac7-9cb2-7e82dda0736a",
+  "uuid": "b4200b62-06cc-438b-ae90-54ab4c894b54",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,10 +9,10 @@
   "packable": true,
   "platformSettings": {},
   "subMetas": {
-    "后退": {
+    "question": {
       "ver": "1.0.4",
-      "uuid": "731ddf60-504b-4f84-a8ec-97fdc8122798",
-      "rawTextureUuid": "f21df4ac-f3d5-4ac7-9cb2-7e82dda0736a",
+      "uuid": "a36bc535-4ce7-451d-8df4-cd9b1d3a347e",
+      "rawTextureUuid": "b4200b62-06cc-438b-ae90-54ab4c894b54",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -20,10 +20,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 62,
-      "height": 63,
-      "rawWidth": 62,
-      "rawHeight": 63,
+      "width": 33,
+      "height": 33,
+      "rawWidth": 33,
+      "rawHeight": 33,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

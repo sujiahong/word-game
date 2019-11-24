@@ -21,14 +21,14 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this.backButton.node.on("click", this.onBack, this);
+        //this.backButton.node.on("click", this.onBack, this);
         console.log(TAG, "onload onload")
         var scrollContent = this.rankScroll.content;
         console.log(scrollContent.width, scrollContent.height)
         for(var i = 0; i < 5; ++i){
             var prefab = cc.instantiate(this.friendPrefab);
             
-            //prefab.setPosition(cc.v2(0, -500))
+            //prefab.setPosition(cc.v2(0, -350))
             scrollContent.addChild(prefab);
             console.log(prefab.x, prefab.y)
         }

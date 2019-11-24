@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "1f8fa478-a036-48fe-8ee9-cd689ea2022d",
+  "uuid": "f37d4f2e-aa72-4c84-b775-24a5d6f6449e",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,10 +9,10 @@
   "packable": true,
   "platformSettings": {},
   "subMetas": {
-    "组 4": {
+    "rank_pannel": {
       "ver": "1.0.4",
-      "uuid": "604c3476-8393-4bf9-b486-8bc9a0b19ad9",
-      "rawTextureUuid": "1f8fa478-a036-48fe-8ee9-cd689ea2022d",
+      "uuid": "ccf57027-f82c-4613-af17-a8bdd851a32d",
+      "rawTextureUuid": "f37d4f2e-aa72-4c84-b775-24a5d6f6449e",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -20,10 +20,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 87,
-      "height": 89,
-      "rawWidth": 87,
-      "rawHeight": 89,
+      "width": 600,
+      "height": 1062,
+      "rawWidth": 600,
+      "rawHeight": 1062,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

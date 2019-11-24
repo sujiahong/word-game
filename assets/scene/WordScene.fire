@@ -334,7 +334,7 @@
         "__id__": 44
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 2,
     "_components": [
       {
@@ -1798,8 +1798,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
-      "height": 60
+      "width": 140,
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1846,7 +1846,7 @@
     "_useOriginalSize": false,
     "_string": "金榜题名",
     "_N$string": "金榜题名",
-    "_fontSize": 40,
+    "_fontSize": 35,
     "_lineHeight": 40,
     "_enableWrapText": false,
     "_N$file": null,
@@ -2245,7 +2245,7 @@
         "__id__": 120
       }
     ],
-    "_active": false,
+    "_active": true,
     "_level": 2,
     "_components": [],
     "_prefab": null,
@@ -3927,7 +3927,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 200,
+      "y": 250,
       "z": 0
     },
     "_scale": {
@@ -7665,7 +7665,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -200,
+      "x": 200,
       "y": 500,
       "z": 0
     },
@@ -7824,8 +7824,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "X",
-    "_N$string": "X",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -7912,8 +7912,8 @@
     "clickEvents": [],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
-    "_N$transition": 2,
-    "transition": 2,
+    "_N$transition": 3,
+    "transition": 3,
     "_N$normalColor": {
       "__type__": "cc.Color",
       "r": 230,

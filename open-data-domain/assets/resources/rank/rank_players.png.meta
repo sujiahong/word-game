@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "9cb0d2ff-4a87-4b66-98ce-0db2b88e598a",
+  "uuid": "dd6e6c04-60cf-47b8-9311-6aa1bc946cc9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "rank_players": {
       "ver": "1.0.4",
-      "uuid": "9650d0ea-3881-4e7b-bfac-09300457f119",
-      "rawTextureUuid": "9cb0d2ff-4a87-4b66-98ce-0db2b88e598a",
+      "uuid": "4892e1fc-7f1c-4f46-a320-3a2e2083c0bc",
+      "rawTextureUuid": "dd6e6c04-60cf-47b8-9311-6aa1bc946cc9",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
