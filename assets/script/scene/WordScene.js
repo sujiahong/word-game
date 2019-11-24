@@ -39,9 +39,9 @@ cc.loader.loadRes("UI/main/words4", function(err, tex){
     }
 });
 
-cc.loader.downloader.loadSubpackage("resources", function(err){
-    console.log(err, "分包加载1111！！");
-});
+// cc.loader.downloader.loadSubpackage("resources", function(err){
+//     console.log(err, "分包加载1111！！");
+// });
 
 var cls = {};
 cls.extends = cc.Component;
@@ -51,7 +51,7 @@ cls.properties = {
     powerLabel: cc.Label,
     timeLabel: cc.Label,
     shareButton: cc.Button,
-    logoImg: cc.Sprite,
+    //logoImg: cc.Sprite,
     levelButton: cc.Button,
     levelBtnLabel: cc.Label,
     homeRankButton: cc.Button,
