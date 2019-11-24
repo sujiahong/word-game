@@ -1893,10 +1893,12 @@
     "node": {
       "__id__": 33
     },
-    "_enabled": false,
+    "_enabled": true,
     "_defaultClip": null,
     "_clips": [
-      null
+      {
+        "__uuid__": "7f1d360c-1d29-4fae-9648-260763b6ec72"
+      }
     ],
     "playOnLoad": false,
     "_id": "edUVrhaS5By7GbaFg6ChfB"
@@ -7457,8 +7459,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 640,
-      "height": 1386
+      "width": 600,
+      "height": 1050
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -7540,8 +7542,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 100
+      "width": 80,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -7550,8 +7552,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 200,
-      "y": 500,
+      "x": 250,
+      "y": 480,
       "z": 0
     },
     "_scale": {

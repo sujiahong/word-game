@@ -346,8 +346,8 @@ cls.playBackWordAnim = function(next){
 cls.playHomeAnim = function(){
     var levelAnim = this.levelButton.node.getComponent(cc.Animation);
     levelAnim.play("level");
-    // var homeRankAnim = this.homeRankButton.node.getComponent(cc.Animation);
-    // homeRankAnim.play("home_rank");
+    var homeRankAnim = this.homeRankButton.node.getComponent(cc.Animation);
+    homeRankAnim.play("home_rank");
     var powerAnim = this.powerNode.getComponent(cc.Animation);
     powerAnim.play("power");
     // var logoAnim = this.logoImg.node.getComponent(cc.Animation);
